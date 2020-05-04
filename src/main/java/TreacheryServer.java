@@ -54,7 +54,8 @@ public class TreacheryServer {
                     Vector2D start_pos = new Vector2D(m.locationX, m.locationY);
                     Vector2D end_pos = new Vector2D(m.targetX, m.targetY);
                     System.out.println(start_pos + ", " + end_pos);
-                    Vector2D vector = start_pos.getSubtracted(end_pos);
+//                    Vector2D vector = start_pos.getSubtracted(end_pos);
+                    Vector2D vector = end_pos.getSubtracted(start_pos);
                     vector.normalize();
 
                     bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos));
