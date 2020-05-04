@@ -53,12 +53,15 @@ public class TreacheryServer {
                     messageClasses.Projectile m = (messageClasses.Projectile) object;
                     Vector2D start_pos = new Vector2D(m.locationX, m.locationY);
                     Vector2D end_pos = new Vector2D(m.targetX, m.targetY);
-                    System.out.println(start_pos + ", " + end_pos);
-//                    Vector2D vector = start_pos.getSubtracted(end_pos);
                     Vector2D vector = end_pos.getSubtracted(start_pos);
                     vector.normalize();
+                    float angle = (float) Math.atan2(m.targetY- m.locationY, m.targetX- m.locationX);
+                    angle = (float) Math.toDegrees(angle);
+                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle));
 
-                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos));
+
+
+
                 }
             }
         });
