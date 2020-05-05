@@ -1,4 +1,5 @@
 
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -17,6 +18,9 @@ public class messageClasses {
         kryo.register(Bullet.class);
         kryo.register(Vector2D.class);
         kryo.register(Hit.class);
+        kryo.register(RoundStart.class);
+        kryo.register(Death.class);
+        kryo.register(RoundEnd.class);
     }
 
     static public class mapRequest {
@@ -37,10 +41,12 @@ public class messageClasses {
     static public class playerUpdate {
         float x;
         float y;
+        boolean alive;
 
-        public playerUpdate(float x, float y) {
+        public playerUpdate(float x, float y, boolean alive) {
             this.x = x;
             this.y = y;
+            this.alive = alive;
         }
 
         public playerUpdate() {
@@ -73,7 +79,48 @@ public class messageClasses {
 
     static public class Hit {
         public int damage;
-        public Hit(int damage) {this.damage = damage;}
-        public Hit(){}
+
+        public Hit(int damage) {
+            this.damage = damage;
+        }
+
+        public Hit() {
+        }
     }
+
+    static public class RoundStart {
+        public int role;
+
+        public RoundStart(int role) {
+            this.role = role;
+        }
+
+        public RoundStart() {
+        }
+    }
+
+    static public class RoundEnd {
+        public int role;
+
+        public RoundEnd(int role) {
+            this.role = role;
+        }
+
+        public RoundEnd() {
+        }
+    }
+
+    static public class Death {
+        public float x;
+        public float y;
+
+        public Death(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public Death() {
+        }
+    }
+
 }
