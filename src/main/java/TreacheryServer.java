@@ -81,6 +81,10 @@ public class TreacheryServer {
                     angle = (float) Math.toDegrees(angle);
                     bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle, connection.getID()));
                 } else if (object instanceof messageClasses.Death) {
+                    messageClasses.Death m = (messageClasses.Death) object;
+                    for (Connection c : server.getConnections()) {
+                        server.sendToTCP(c.getID(), m);
+                    }
                     for (User u : userList) {
                         if (u.ID == connection.getID()) u.alive = false;
                     }
@@ -136,16 +140,16 @@ public class TreacheryServer {
             }
             if (innocents == 0) {
                 for (Connection connection : server.getConnections()) {
-                    server.sendToTCP(connection.getID(), new messageClasses.RoundEnd(TRAITOR));
+                    server.sendToTCP(connection.getID(), new messageClasses.RoundEnd(TRAITOR, userList));
                 }
                 gameState = WAITING;
-                roundCooldown = 150;
+                roundCooldown = 100;
             } else if (traitors == 0) {
                 for (Connection connection : server.getConnections()) {
-                    server.sendToTCP(connection.getID(), new messageClasses.RoundEnd(INNOCENT));
+                    server.sendToTCP(connection.getID(), new messageClasses.RoundEnd(INNOCENT, userList));
                 }
                 gameState = WAITING;
-                roundCooldown = 250;
+                roundCooldown = 100;
             }
 
 
@@ -175,7 +179,6 @@ public class TreacheryServer {
             bullets.removeAll(bulletsRemove);
         }
     }
-
 
     public void startRound() {
         int numTraitors = (int) Math.ceil((float) server.getConnections().length / 4f);

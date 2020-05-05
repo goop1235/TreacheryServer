@@ -101,9 +101,10 @@ public class messageClasses {
 
     static public class RoundEnd {
         public int role;
-
-        public RoundEnd(int role) {
+        public ArrayList<User> userList;
+        public RoundEnd(int role, ArrayList<User> userList) {
             this.role = role;
+            this.userList = userList;
         }
 
         public RoundEnd() {
