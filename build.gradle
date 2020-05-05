@@ -14,4 +14,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+    compile files('libtiled-1.2.3-SNAPSHOT.jar')
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
 }

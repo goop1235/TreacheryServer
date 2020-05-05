@@ -16,6 +16,7 @@ public class messageClasses {
         kryo.register(Projectile.class);
         kryo.register(Bullet.class);
         kryo.register(Vector2D.class);
+        kryo.register(Hit.class);
     }
 
     static public class mapRequest {
@@ -68,5 +69,11 @@ public class messageClasses {
         public float velocity;
 
         public String texture;
+    }
+
+    static public class Hit {
+        public int damage;
+        public Hit(int damage) {this.damage = damage;}
+        public Hit(){}
     }
 }
