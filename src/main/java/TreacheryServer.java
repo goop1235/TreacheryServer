@@ -168,7 +168,11 @@ public class TreacheryServer {
                 }
                 ObjectGroup objects = (ObjectGroup) map.getLayer(1);
                 for (MapObject o : objects) {
-                    if (o.getBounds().contains(b.x, b.y)) bulletsRemove.add(b);
+                    boolean wall = false;
+                    try {
+                        wall = Boolean.parseBoolean(o.getProperties().getProperty("Wall"));
+                    }catch (Exception ignored){}
+                    if (o.getBounds().contains(b.x, b.y) && wall) bulletsRemove.add(b);
                 }
 
                 for (User u : userList) {
