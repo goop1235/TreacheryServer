@@ -123,12 +123,14 @@ public class TreacheryServer {
     }
 
     public void update() {
+        // Check if should start game
         if (gameState == WAITING) {
             roundCooldown--;
             if (server.getConnections().length >= 2 && roundCooldown <= 0) {
                 startRound();
                 gameState = MID_ROUND;
             }
+            // Check if someone won
         } else if (gameState == MID_ROUND) {
             int innocents = 0;
             int traitors = 0;
@@ -152,7 +154,7 @@ public class TreacheryServer {
                 roundCooldown = 100;
             }
 
-
+            // Update bullets
             bulletsRemove.clear();
             for (Bullet b : bullets) {
                 Vector2D v = new Vector2D(b.vector);
@@ -170,7 +172,7 @@ public class TreacheryServer {
                 }
 
                 for (User u : userList) {
-                    if (b.ownerID != u.ID && b.x > u.x && b.x < u.x + 50 && b.y > u.y && b.y < u.y + 50) {
+                    if (b.ownerID != u.ID && b.x > u.x && b.x < u.x + 50 && b.y > u.y && b.y < u.y + 50 && u.alive) {
                         server.sendToTCP(u.ID, new messageClasses.Hit(b.damage));
                         bulletsRemove.add(b);
                     }
@@ -181,6 +183,7 @@ public class TreacheryServer {
     }
 
     public void startRound() {
+        bullets.clear();
         int numTraitors = (int) Math.ceil((float) server.getConnections().length / 4f);
         int role;
         List<Connection> list = new ArrayList<>();
