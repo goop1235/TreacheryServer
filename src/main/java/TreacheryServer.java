@@ -83,7 +83,7 @@ public class TreacheryServer {
                     vector.normalize();
                     float angle = (float) Math.atan2(m.targetY - m.locationY, m.targetX - m.locationX);
                     angle = (float) Math.toDegrees(angle);
-                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle, connection.getID()));
+                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle, connection.getID(), m.texture));
                 } else if (object instanceof messageClasses.Death) {
                     messageClasses.Death m = (messageClasses.Death) object;
                     for (Connection c : server.getConnections()) {
@@ -140,6 +140,7 @@ public class TreacheryServer {
         executor.scheduleAtFixedRate(update, 0, 50, TimeUnit.MILLISECONDS);
     }
 
+    // Runs 50 times per second
     public void update() {
         // Check if should start game
         if (gameState == WAITING) {
