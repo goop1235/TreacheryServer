@@ -19,7 +19,7 @@ public class TreacheryServer {
     Map map;
     int MAP_HEIGHT;
     int MAP_WIDTH;
-    final String mapName = "map1.tmx";
+    final String mapName = "map2.tmx";
     Server server = new Server();
     ArrayList<User> userList = new ArrayList<>();
     ArrayList<User> tempList = new ArrayList<>();
@@ -51,6 +51,10 @@ public class TreacheryServer {
                     messageClasses.mapRequest message = (messageClasses.mapRequest) object;
                     messageClasses.mapReceive response = new messageClasses.mapReceive();
                     response.mapName = mapName;
+                    response.list = new ArrayList<>();
+                    for (MapObject o : ((ObjectGroup) map.getLayer(0)).getObjects()) {
+                        response.list.add(o.getBounds());
+                    }
                     connection.sendTCP(response);
                     userList.add(new User(connection.getID(), 0, 0, message.name));
 
@@ -89,6 +93,17 @@ public class TreacheryServer {
                         if (u.ID == connection.getID()) u.alive = false;
                     }
                 }
+                else if (object instanceof messageClasses.ItemDropped) {
+                    for (Connection c : server.getConnections()) {
+                        if (c.getID() != connection.getID()) server.sendToTCP(c.getID(), object);
+                    }
+                }
+                else if (object instanceof messageClasses.ItemPickedUp) {
+                    for (Connection c : server.getConnections()) {
+                        if (c.getID() != connection.getID()) server.sendToTCP(c.getID(), object);
+                    }
+                }
+
             }
         });
         server.addListener(new Listener() {
@@ -110,9 +125,12 @@ public class TreacheryServer {
         try {
             TMXMapReader mapReader = new TMXMapReader();
             map = mapReader.readMap("maps/" + mapName);
-            MAP_WIDTH = map.getHeight() * 64;
-            MAP_HEIGHT = map.getWidth() * 64;
-        } catch (Exception e) {
+            MAP_WIDTH = map.getWidth() * 64;
+            MAP_HEIGHT = map.getHeight() * 64;
+            for (MapObject o : ((ObjectGroup) map.getLayer(0)).getObjects()) {
+                o.setY(MAP_HEIGHT - o.getY() - o.getHeight());
+            }
+        } catch (Throwable e) {
             System.out.println("Error while reading the map:\n" + e.getMessage());
             return;
         }
@@ -166,7 +184,7 @@ public class TreacheryServer {
                 if (b.x < 0 || b.y < 0 || b.x > MAP_WIDTH || b.y > MAP_HEIGHT) {
                     bulletsRemove.add(b);
                 }
-                ObjectGroup objects = (ObjectGroup) map.getLayer(1);
+                List<MapObject> objects = ((ObjectGroup) map.getLayer(0)).getObjects();
                 for (MapObject o : objects) {
                     boolean wall = false;
                     try {

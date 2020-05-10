@@ -1,8 +1,8 @@
 
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class messageClasses {
@@ -21,6 +21,9 @@ public class messageClasses {
         kryo.register(RoundStart.class);
         kryo.register(Death.class);
         kryo.register(RoundEnd.class);
+        kryo.register(ItemDropped.class);
+        kryo.register(ItemPickedUp.class);
+        kryo.register(Rectangle2D.Double.class);
     }
 
     static public class mapRequest {
@@ -36,6 +39,7 @@ public class messageClasses {
 
     static public class mapReceive {
         public String mapName;
+        ArrayList<Rectangle2D.Double> list;
     }
 
     static public class playerUpdate {
@@ -102,6 +106,7 @@ public class messageClasses {
     static public class RoundEnd {
         public int role;
         public ArrayList<User> userList;
+
         public RoundEnd(int role, ArrayList<User> userList) {
             this.role = role;
             this.userList = userList;
@@ -110,6 +115,7 @@ public class messageClasses {
         public RoundEnd() {
         }
     }
+
 
     static public class Death {
         public float x;
@@ -124,4 +130,30 @@ public class messageClasses {
         }
     }
 
+    static public class ItemDropped {
+        float x;
+        float y;
+        int weaponID;
+
+        public ItemDropped(float x, float y, int weaponID) {
+            this.x = x;
+            this.y = y;
+            this.weaponID = weaponID;
+        }
+
+        public ItemDropped() {
+        }
+    }
+    static public class ItemPickedUp {
+        float x;
+        float y;
+        int weaponID;
+        public ItemPickedUp(float x, float y, int weaponID) {
+            this.x = x;
+            this.y = y;
+            this.weaponID = weaponID;
+        }
+        public ItemPickedUp() {
+        }
+    }
 }
