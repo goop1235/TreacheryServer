@@ -56,7 +56,7 @@ public class TreacheryServer {
                         response.list.add(o.getBounds());
                     }
                     connection.sendTCP(response);
-                    userList.add(new User(connection.getID(), 0, 0, message.name));
+                    userList.add(new User(connection.getID(), 0, 0, message.name, true, "ers"));
 
                 } else if (object instanceof messageClasses.playerUpdate) {
                     messageClasses.playerUpdate message = (messageClasses.playerUpdate) object;
@@ -66,6 +66,8 @@ public class TreacheryServer {
                             if (message.alive) {
                                 u.x = message.x;
                                 u.y = message.y;
+                                u.showName = message.showName;
+                                u.texture = message.texture;
                             }
 
                         }

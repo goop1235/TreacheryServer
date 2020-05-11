@@ -46,11 +46,15 @@ public class messageClasses {
         float x;
         float y;
         boolean alive;
+        boolean showName;
+        String texture;
 
-        public playerUpdate(float x, float y, boolean alive) {
+        public playerUpdate(float x, float y, boolean alive, boolean showName, String texture) {
             this.x = x;
             this.y = y;
             this.alive = alive;
+            this.showName = showName;
+            this.texture = texture;
         }
 
         public playerUpdate() {
