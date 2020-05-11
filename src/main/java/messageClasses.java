@@ -81,6 +81,11 @@ public class messageClasses {
         public float targetY;
         public int damage;
         public float velocity;
+        public int width;
+        public int height;
+        public boolean rotate;
+        public boolean collision;
+        public boolean removeOnHit;
 
         public String texture;
     }

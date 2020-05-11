@@ -6,6 +6,7 @@ import org.mapeditor.core.MapObject;
 import org.mapeditor.core.ObjectGroup;
 import org.mapeditor.io.TMXMapReader;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +86,8 @@ public class TreacheryServer {
                     vector.normalize();
                     float angle = (float) Math.atan2(m.targetY - m.locationY, m.targetX - m.locationX);
                     angle = (float) Math.toDegrees(angle);
-                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle, connection.getID(), m.texture));
+                    bullets.add(new Bullet(m.locationX, m.locationY, m.damage, m.velocity, vector, start_pos, angle, connection.getID(), m.texture, m.width, m.height, m.rotate,
+                            m.collision, m.removeOnHit));
                 } else if (object instanceof messageClasses.Death) {
                     messageClasses.Death m = (messageClasses.Death) object;
                     for (Connection c : server.getConnections()) {
@@ -94,13 +96,11 @@ public class TreacheryServer {
                     for (User u : userList) {
                         if (u.ID == connection.getID()) u.alive = false;
                     }
-                }
-                else if (object instanceof messageClasses.ItemDropped) {
+                } else if (object instanceof messageClasses.ItemDropped) {
                     for (Connection c : server.getConnections()) {
                         if (c.getID() != connection.getID()) server.sendToTCP(c.getID(), object);
                     }
-                }
-                else if (object instanceof messageClasses.ItemPickedUp) {
+                } else if (object instanceof messageClasses.ItemPickedUp) {
                     for (Connection c : server.getConnections()) {
                         if (c.getID() != connection.getID()) server.sendToTCP(c.getID(), object);
                     }
@@ -177,7 +177,8 @@ public class TreacheryServer {
 
             // Update bullets
             bulletsRemove.clear();
-            for (Bullet b : bullets) {
+            for (Bullet b : bullets) {Rectangle rectangle = new Rectangle((int) b.x, (int) b.y, b.width, b.height);
+
                 Vector2D v = new Vector2D(b.vector);
                 v.multiply(b.speed);
                 b.position.add(v);
@@ -187,19 +188,34 @@ public class TreacheryServer {
                 if (b.x < 0 || b.y < 0 || b.x > MAP_WIDTH || b.y > MAP_HEIGHT) {
                     bulletsRemove.add(b);
                 }
-                List<MapObject> objects = ((ObjectGroup) map.getLayer(0)).getObjects();
-                for (MapObject o : objects) {
-                    boolean wall = false;
-                    try {
-                        wall = Boolean.parseBoolean(o.getProperties().getProperty("Wall"));
-                    }catch (Exception ignored){}
-                    if (o.getBounds().contains(b.x, b.y) && wall) bulletsRemove.add(b);
+                if (b.collision) {
+
+                    List<MapObject> objects = ((ObjectGroup) map.getLayer(0)).getObjects();
+                    for (MapObject o : objects) {
+                        boolean wall = false;
+                        try {
+                            wall = Boolean.parseBoolean(o.getProperties().getProperty("Wall"));
+                        } catch (Exception ignored) {
+                        }
+
+                        if (rectangle.width == 0 || rectangle.height == 0) {
+                            if ((o.getBounds().contains(b.x, b.y)) && wall) {
+                                bulletsRemove.add(b);
+                            }
+                        } else {
+                            if ((o.getBounds().intersects(rectangle) || rectangle.intersects(o.getBounds())) && wall) {
+                                bulletsRemove.add(b);
+                            }
+                        }
+                    }
                 }
 
                 for (User u : userList) {
-                    if (b.ownerID != u.ID && b.x > u.x && b.x < u.x + 50 && b.y > u.y && b.y < u.y + 50 && u.alive) {
+                    Rectangle userRect = new Rectangle((int)u.x, (int)u.y, 50, 50);
+                    if (b.ownerID != u.ID && !b.playersHit.contains(u.ID) && (userRect.intersects(rectangle) || rectangle.intersects(userRect))) {
                         server.sendToTCP(u.ID, new messageClasses.Hit(b.damage));
-                        bulletsRemove.add(b);
+                        b.playersHit.add(u.ID);
+                        if (b.removeOnHit) bulletsRemove.add(b);
                     }
                 }
             }
