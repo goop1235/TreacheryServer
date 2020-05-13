@@ -177,7 +177,12 @@ public class TreacheryServer {
 
             // Update bullets
             bulletsRemove.clear();
-            for (Bullet b : bullets) {Rectangle rectangle = new Rectangle((int) b.x, (int) b.y, b.width, b.height);
+            for (Bullet b : bullets) {
+                Rectangle rectangle = new Rectangle((int) b.x, (int) b.y, b.width, b.height);
+                if (rectangle.width == 0) {
+                    rectangle.width = 1;
+                    rectangle.height = 1;
+                }
 
                 Vector2D v = new Vector2D(b.vector);
                 v.multiply(b.speed);
@@ -198,7 +203,7 @@ public class TreacheryServer {
                         } catch (Exception ignored) {
                         }
 
-                        if (rectangle.width == 0 || rectangle.height == 0) {
+                        if (b.width == 0 || b.height == 0) {
                             if ((o.getBounds().contains(b.x, b.y)) && wall) {
                                 bulletsRemove.add(b);
                             }
