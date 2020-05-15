@@ -142,6 +142,10 @@ public class TreacheryServer {
         executor.scheduleAtFixedRate(update, 0, 50, TimeUnit.MILLISECONDS);
     }
 
+    public static void main(String[] arg) {
+        new TreacheryServer();
+    }
+
     // Runs 50 times per second
     public void update() {
         // Check if should start game
@@ -217,7 +221,8 @@ public class TreacheryServer {
 
                 for (User u : userList) {
                     Rectangle userRect = new Rectangle((int)u.x, (int)u.y, 50, 50);
-                    if (b.ownerID != u.ID && !b.playersHit.contains(u.ID) && (userRect.intersects(rectangle) || rectangle.intersects(userRect))) {
+                    if (b.ownerID != u.ID && !b.playersHit.contains(u.ID) && (userRect.intersects(rectangle)
+                            || rectangle.intersects(userRect))) {
                         server.sendToTCP(u.ID, new messageClasses.Hit(b.damage));
                         b.playersHit.add(u.ID);
                         if (b.removeOnHit) bulletsRemove.add(b);
@@ -232,10 +237,7 @@ public class TreacheryServer {
         bullets.clear();
         int numTraitors = (int) Math.ceil((float) server.getConnections().length / 4f);
         int role;
-        List<Connection> list = new ArrayList<>();
-        for (Connection connection : server.getConnections()) {
-            list.add(connection);
-        }
+        List<Connection> list = new ArrayList<>(Arrays.asList(server.getConnections()));
         Collections.shuffle(list);
 
         for (Connection c : list) {
